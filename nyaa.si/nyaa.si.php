@@ -64,7 +64,7 @@ class nyaa implements ISite, ISearch {
                 $tlink->seeds         = $result["seeds"][$i] + 0;
                 $tlink->peers         = $result["leechers"][$i] + 0;
                 $tlink->category      = "Anime";
-                $tlink->enclosure_url = html_entity_decode($result["magnet"][$i], ENT_QUOTES, 'UTF-8');
+                $tlink->enclosure_url = nyaa::SITE . $result["torrent"][$i];
 
                 $found []= $tlink;
 
