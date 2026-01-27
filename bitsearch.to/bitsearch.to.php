@@ -31,7 +31,7 @@ class bitsearch implements ISite, ISearch {
                     "fa-calendar.*?<span>(?P<date>[^<]+)</span>.*?".
                     "text-green.*?font-medium\">(?P<seeds>\\d+)</span>.*?".
                     "text-red.*?font-medium\">(?P<leechers>\\d+)</span>.*?".
-                    "magnet:\\?xt(?:&#x3D;|=)urn:btih:(?P<hash>[A-Fa-f0-9]+)".
+                    "href=\"(?P<magnet>magnet:[^\"]+)\"".
                 "`siU",
                 $body,
                 $result
@@ -57,12 +57,14 @@ class bitsearch implements ISite, ISearch {
                     $tlink->time = new DateTime();
                 }
 
-                $hash = $result["hash"][$i];
+                $magnet = html_entity_decode($result["magnet"][$i], ENT_QUOTES, 'UTF-8');
+                preg_match("/btih:([A-Fa-f0-9]+)/", $magnet, $hashMatch);
+                $hash = isset($hashMatch[1]) ? $hashMatch[1] : "";
                 $tlink->link          = bitsearch::SITE . "/torrent/" . strtolower($hash);
                 $tlink->seeds         = $result["seeds"][$i] + 0;
                 $tlink->peers         = $result["leechers"][$i] + 0;
                 $tlink->category      = "";
-                $tlink->enclosure_url = bitsearch::SITE . "/download/torrent/" . $hash . "?title=" . urlencode($tlink->name);
+                $tlink->enclosure_url = $magnet;
 
                 $found []= $tlink;
 
@@ -76,7 +78,11 @@ class bitsearch implements ISite, ISearch {
         };
 
         while ($page !== false && count($found) < $limit) {
-            if (!$ajax->request(Array("url" => bitsearch::SITE."/search?q=$keyword&page=$page"), $success)) {
+            $request = array(
+                "url"  => bitsearch::SITE."/search?q=$keyword&page=$page",
+                "body" => true
+            );
+            if (!$ajax->request($request, $success)) {
                 break;
             }
         }

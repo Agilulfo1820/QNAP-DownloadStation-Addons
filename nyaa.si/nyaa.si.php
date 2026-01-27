@@ -78,7 +78,11 @@ class nyaa implements ISite, ISearch {
         };
 
         while ($page !== false && count($found) < $limit) {
-            if (!$ajax->request(Array("url" => nyaa::SITE."/?f=0&c=0_0&q=$keyword&p=$page"), $success)) {
+            $request = array(
+                "url"  => nyaa::SITE."/?f=0&c=0_0&q=$keyword&p=$page",
+                "body" => true
+            );
+            if (!$ajax->request($request, $success)) {
                 break;
             }
         }

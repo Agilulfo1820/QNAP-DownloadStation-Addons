@@ -82,7 +82,11 @@ class limetorrents implements ISite, ISearch {
         };
 
         while ($page !== false && count($found) < $limit) {
-            if (!$ajax->request(Array("url" => limetorrents::SITE."/search/all/$keyword/$page/"), $success)) {
+            $request = array(
+                "url"  => limetorrents::SITE."/search/all/$keyword/$page/",
+                "body" => true
+            );
+            if (!$ajax->request($request, $success)) {
                 break;
             }
         }
