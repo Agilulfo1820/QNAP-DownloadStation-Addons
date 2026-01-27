@@ -4,18 +4,21 @@ Updated add-ons for old DownloadStation v5.0. (which can't be updated on older N
 
 # Installation:
 
-1. Copy the addon folders to your QNAP (only the 3 files each, not the .addon file):
+1. Copy the addon folders to your QNAP:
 
+```
 limetorrents.fun/  
  ├── addon.build  
  ├── addon.json  
  └── limetorrents.fun.php
+```
 
-2. Run the following command to find the addons directory in your QNAP (usually /share/MD0_DATA/.qpkg/DSv3/usr/sbin/addons):
+2. SSH in your QNAP
+3. Run the following command to find the addons directory in your QNAP:
 
 `find /share -name "ds-addon" 2>/dev/null`
 
-3. Place them on the QNAP in the addons directory. SSH into your QNAP and run:
+3. Place them on the QNAP in the addons directory:
 
 `cp -r [addon foldername] /share/MD0_DATA/.qpkg/DSv3/usr/sbin/addons/`
 
