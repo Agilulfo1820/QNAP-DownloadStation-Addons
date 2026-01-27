@@ -1,7 +1,7 @@
 <?php
-class kickass implements ISite, ISearch {
+class eztv implements ISite, ISearch {
     /*
-     * kickass()
+     * eztv()
      * @param {string} $url
      * @param {string} $username
      * @param {string} $password
@@ -24,6 +24,19 @@ class kickass implements ISite, ISearch {
         default: return 1;
         }
     }
+	
+	public function SigFig($value, $digits) {
+		if ($value == 0) {
+			$decimalPlaces = $digits - 1;
+		} elseif ($value < 0) {
+			$decimalPlaces = $digits - floor(log10($value * -1)) - 1;
+		} else {
+			$decimalPlaces = $digits - floor(log10($value)) - 1;
+		}
+
+		$answer = round($value, $decimalPlaces);
+		return $answer;
+	}	
     
     /*
      * Search()
@@ -37,17 +50,18 @@ class kickass implements ISite, ISearch {
         
         $ajax = new Ajax();
         $found = array();
-        $success = function ($_, $_, $_, $body, $url) use(&$page, &$found, &$limit) {
+        $success = function ($ignore1, $ignore2, $ignore3, $body, $url) use(&$page, &$found, &$limit) {
             preg_match_all(
                 "`".
-                    "<tr .+ id=\"torrent_latest_torrents\">.*".
-                        "<a .+ title=\"Torrent magnet link\" href=\"[^\"]+url=(?P<magnet>[^\"]+)\".*</a>.*".
-                        "<a href=\"(?P<link>[^\"]+)\" class=\"cellMainLink\">(?P<name>.*)</a>.*".
-                        "in <span.*><strong><a.*>(?P<category>.*)</a></strong></span>.*".
-                        "<td class=\"nobr center\">(?P<size>[^ ]+) +(?P<unit>[a-zA-Z]*)</span></td>.*".
-                        "<td class=\"nobr center\" title=\"[^\"]+\">(?P<time>.*)</td>.*".
-                        "<td class=\"green center\">(?P<seeds>\d+)</td>.*".
-                        "<td class=\"red lasttd center\">(?P<leechers>\d+)</td>.*".
+                    "<tr .*name=\"hover\" class=\"forum_header_border\">.*".
+						"<td .*>.*</a>.*</td>.*<td .*>.*".
+                        "<a href=\"(?P<link>[^\"]+)\" .*class=\"epinfo\">(?P<name>.*)<.*/a>.*".
+						"</td>.*<td .*>.*".
+                        "<a href=\"(?P<magnet>[^\"]+)\".*</a>.*".
+						"<a href=\".*>.*</a>.*</td>.*".
+                        "<td .*\"forum_thread_post\">(?P<size>[^ ]+) +(?P<unit>[a-zA-Z]*)</td>.*".
+						"<td .*\"forum_thread_post\">(?P<time>.*)</td>.*".
+						"<td .*<font color=\"green\">(?P<seeds>\d+)</font></td>.*".
                     "</tr>".
                 "`siU",
                 $body,
@@ -64,17 +78,24 @@ class kickass implements ISite, ISearch {
             
             for ($i = 0 ; $i < $len ; ++$i) {
                 $tlink = new SearchLink;
-                $date = new DateTime();
-                $time = preg_replace("/s? ago/", "", $result["time"][$i]);
-                
-                $tlink->src           = "Kickass";
+
+                $tlink->src           = "eztv";
                 $tlink->link          = $url . $result["link"][$i];
                 $tlink->name          = $result["name"][$i];
-                $tlink->size          = ($result["size"][$i] + 0) * kickass::UnitSize($result["unit"][$i]);
+                $tlink->size          = eztv::SigFig(($result["size"][$i] + 0), 3) * eztv::UnitSize($result["unit"][$i]);
+
+                $date = new DateTime();
+				$time = $result["time"][$i];
+				// examples: 46m; 22h 16m; 3d 10h; 2 week(s); 5 mo; 3 year(s)
+				$time = preg_replace("/h/", "hour", $time);				
+				$time = preg_replace("/mo/", "Month", $time);
+				$time = preg_replace("/m/", "minute", $time);	
+				$time = preg_replace("/d/", "day", $time);
+				
                 $tlink->time          = date_sub($date, date_interval_create_from_date_string($time));
                 $tlink->seeds         = $result["seeds"][$i] + 0;
-                $tlink->peers         = $result["leechers"][$i] + 0;
-                $tlink->category      = strtolower($result["category"][$i]);
+                $tlink->peers         = 0;
+                $tlink->category      = "TV shows";
                 $tlink->enclosure_url = urldecode(urldecode($result["magnet"][$i]));
                 
                 $found []= $tlink;
@@ -90,12 +111,8 @@ class kickass implements ISite, ISearch {
         
         while ($page !== false && count($found) < $limit) {
             $request = array(
-                "url" => "https://kickassz.com/usearch/$keyword/$page",
-                "body" => true,
-                "params" => array(
-                    "field" => "seeders",
-                    "sorder" => "desc"
-                )
+                "url" => "https://eztv.wf/search/" . $keyword,
+                "body" => true
             );
             if (!$ajax->request($request, $success)) {
                 break;

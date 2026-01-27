@@ -1,0 +1,21 @@
+{
+    "author": "danrusnac",
+    "website": "https://github.com/renedewit/QNAP-DownloadStation-Addons",
+    "name": "nyaa.si",
+    "addon": "nyaa.si.php",
+    "class": "nyaa",
+    "hosts": [
+        "nyaa.si"
+    ],
+    "domain": "nyaa.si",
+    "version": 200,
+    "interface": [
+        "ISearch"
+    ],
+    "qpkg_dependencies": {
+        "DownloadStation": "5.0.1"
+    },
+    "description": {
+        "ENG": "Nyaa.si anime and Japanese media torrent search provider."
+    }
+}

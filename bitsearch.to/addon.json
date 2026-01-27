@@ -1,0 +1,21 @@
+{
+    "author": "danrusnac",
+    "website": "https://github.com/renedewit/QNAP-DownloadStation-Addons",
+    "name": "bitsearch.to",
+    "addon": "bitsearch.to.php",
+    "class": "bitsearch",
+    "hosts": [
+        "bitsearch.to"
+    ],
+    "domain": "bitsearch.to",
+    "version": 200,
+    "interface": [
+        "ISearch"
+    ],
+    "qpkg_dependencies": {
+        "DownloadStation": "5.0.1"
+    },
+    "description": {
+        "ENG": "BitSearch torrent search provider."
+    }
+}

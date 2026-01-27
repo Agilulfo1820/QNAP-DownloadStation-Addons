@@ -2,18 +2,18 @@
     "author": "Rene de Wit",
     "website": "https://github.com/renedewit/QNAP-DownloadStation-Addons",
     "name": "EZTV",
-    "addon": "eztv.re.php",
+    "addon": "eztv.wf.php",
     "class": "eztv",
     "hosts": [
-        "eztv.proxyninja.org"
+        "eztv.wf"
     ],
-    "domain": "eztv.re",
-    "version": 100,
+    "domain": "eztv.wf",
+    "version": 200,
     "interface": [
         "ISearch"
     ],
     "qpkg_dependencies": {
-        "DownloadStation": "5.0.0"
+        "DownloadStation": "5.0.1"
     },
     "description": {
         "ENG": "EZTV TV-series torrents site"
