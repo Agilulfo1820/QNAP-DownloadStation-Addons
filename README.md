@@ -2,38 +2,23 @@
 
 Updated add-ons for old DownloadStation v5.0. (which can't be updated on older NAS-devices with QTS 4.3.3)
 
-# Manual installation:
+# Installation:
 
-1. Manually upload the content of the "addons" folders to the corresponding folder on your NAS. Example command:
-   cp /share/MD0_DATA/Public/[torrent foldername]/\* /share/MD0_DATA/.qpkg/DSv3/usr/sbin/addons/[torrent foldername]/
+1. Copy the addon folders to your QNAP (only the 3 files each, not the .addon file):
 
-2. Open your Download Station app on your NAS, go to Settings, and click the refresh button in the "Add-ons" tab. It will load the newly uploaded add-ons.
+limetorrents.fun/  
+ ├── addon.build  
+ ├── addon.json  
+ └── limetorrents.fun.php
 
-3. Make sure you enable them if you plan to use them.
+2. Run the following command to find the addons directory in your QNAP (usually /share/MD0_DATA/.qpkg/DSv3/usr/sbin/addons):
 
-# Manual run & debug:
+`find /share -name "ds-addon" 2>/dev/null`
 
-You can run these addons from your terminal from your NAS. Follow the addon developer guide to identify where your addons are located, usually /share/MD0_DATA/.qpkg/DSv3/usr/sbin/. Go to the sbin folder and run:
+3. Place them on the QNAP in the addons directory. SSH into your QNAP and run:
 
-./ds-addon -s [addon foldername] [search string] [result limit]
+`cp -r [addon foldername] /share/MD0_DATA/.qpkg/DSv3/usr/sbin/addons/`
 
-So, for example you could run:
+4. Open your Download Station app on your NAS, go to Settings, and click the refresh button in the "Add-ons" tab. It will load the newly uploaded add-ons.
 
-./ds-addon -s 1337x.to [search string] 2
-
-# Create signed package:
-
-If you have never generated an RSA key before, please follow these steps to make a new one. Start in the sbin folder (usually: /share/MD0_DATA/.qpkg/DSv3/usr/sbin):
-
-1. Generate private rsa key:
-   /usr/bin/openssl genrsa -out private.pem 1024
-
-2. Generate public rsa key from the private one:
-   /usr/bin/openssl rsa -in private.pem -out public.pem -outform PEM -pubout
-
-Both keys should be present in the sbin folder (check with: ls -al command).
-
-3.And next, use ds-addon-pack.sh and RSA key to compress add-ons and make a signature:
-./ds-addon-pack.sh private.pem public.pem addons/[torrent foldername]
-
-This will generate a package "[torrent foldername][version-timestamp].addon" in the sbin folder.
+5. Make sure you enable them if you plan to use them.
