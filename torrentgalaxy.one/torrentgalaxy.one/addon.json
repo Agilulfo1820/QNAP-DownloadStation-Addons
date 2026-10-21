@@ -1,0 +1,13 @@
+{
+    "author": "Bruno Aquino",
+    "website": "https://torrentgalaxy.one",
+    "name": "torrentgalaxy.one",
+    "addon": "torrentgalaxy.one.php",
+    "class": "torrentgalaxy",
+    "hosts": ["torrentgalaxy.one"],
+    "domain": "torrentgalaxy.one",
+    "version": 101,
+    "interface": ["ISearch", "IDownload"],
+    "qpkg_dependencies": {"DownloadStation": "5.0.1"},
+    "description": {"ENG": "TorrentGalaxy HTML list search; magnet resolved from detail page at download time."}
+}
