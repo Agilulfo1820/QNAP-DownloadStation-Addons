@@ -6,8 +6,8 @@
     "class": "torrentgalaxy",
     "hosts": ["torrentgalaxy.one"],
     "domain": "torrentgalaxy.one",
-    "version": 100,
-    "interface": ["ISearch"],
+    "version": 101,
+    "interface": ["ISearch", "IDownload"],
     "qpkg_dependencies": {"DownloadStation": "5.0.1"},
-    "description": {"ENG": "TorrentGalaxy HTML search and detail-page magnet provider."}
+    "description": {"ENG": "TorrentGalaxy HTML list search; magnet resolved from detail page at download time."}
 }

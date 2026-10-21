@@ -1,9 +1,12 @@
 <?php
-class torrentgalaxy implements ISite, ISearch {
+class torrentgalaxy implements ISite, ISearch, IDownload {
+    private $url;
     const SITE = 'https://torrentgalaxy.one';
-    const MAX_PAGES = 20;
+    const MAX_PAGES = 5;
 
-    public function __construct($url = null, $username = null, $password = null, $meta = null) {}
+    public function __construct($url = null, $username = null, $password = null, $meta = null) {
+        $this->url = $url;
+    }
 
     private static function text($html) {
         return trim(preg_replace('/\s+/u', ' ', str_replace("\xC2\xA0", ' ',
@@ -99,11 +102,7 @@ class torrentgalaxy implements ISite, ISearch {
                 if (isset($seen[$item->link])) { continue; }
                 $seen[$item->link] = true;
                 ++$new;
-                $detail = self::fetch($ajax, $item->link);
-                if ($detail === false) { continue; }
-                $magnet = self::ParseMagnet($detail);
-                if ($magnet === false) { continue; }
-                $item->enclosure_url = $magnet;
+                $item->enclosure_url = $item->link;
                 $found[] = $item;
                 if (count($found) >= $limit) { break; }
             }
@@ -112,5 +111,27 @@ class torrentgalaxy implements ISite, ISearch {
         }
         // Category filtering is not mapped: same behavior as existing providers.
         return $found;
+    }
+    public function GetDownloadLink() {
+        $url = $this->url;
+        if (!preg_match('~^https?://(www\.)?torrentgalaxy\.one/post-detail/~i', $url)) {
+            return new DownloadLink($url);
+        }
+        $html = self::fetch(new Ajax(), $url);
+        $magnet = $html === false ? false : self::ParseMagnet($html);
+        if ($magnet === false) {
+            report(ADDON_AJAX_FAIL, $url . " magnet not found.\n");
+        }
+        $dlink = new DownloadLink($url);
+        $dlink->url = $magnet;
+        if (preg_match('~[?&]dn=([^&]+)~', $magnet, $dn)) {
+            $dlink->base_name = urldecode($dn[1]);
+            $dlink->filename = $dlink->base_name;
+        }
+        return $dlink;
+    }
+
+    public function RefreshDownloadLink($dlink) {
+        return $dlink;
     }
 }
